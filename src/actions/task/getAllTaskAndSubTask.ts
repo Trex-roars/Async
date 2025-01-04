@@ -2,67 +2,72 @@
 
 import { db } from "@/lib/db";
 
-// Server action to fetch tasks and subtasks by user ID
 export async function getAllTaskAndSubTask(userId: string) {
   try {
-    if (!userId) {
-      throw new Error("User ID is required.");
+    if (!userId?.trim()) {
+      throw new Error("Valid user ID is required.");
     }
 
-    // Fetch tasks assigned to the user along with related data
-    const userWithTasks = await db.user.findUnique({
-      where: { id: userId },
-      include: {
-        tasks: {
+    // Fetch tasks where user is either assignee or creator
+    const tasks = await db.task.findMany({
+      where: {
+        OR: [
+          { assignees: { some: { id: userId } } },
+          { creatorId: userId }
+        ]
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        deadline: true,
+        createdAt: true,
+        updatedAt: true,
+        status: true,
+        priority: true,
+        startDate: true,
+        completedAt: true,
+        estimatedHours: true,
+        actualHours: true,
+        isArchived: true,
+
+        // Related entities with selective fields
+        assignees: {
           select: {
             id: true,
-            title: true,
+            name: true,
+            email: true,
+            imageUrl: true,
+          },
+        },
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            imageUrl: true,
+          },
+        },
+        team: {
+          select: {
+            id: true,
+            name: true,
             description: true,
-            deadline: true,
+            department: true,
+          },
+        },
+        comments: {
+          select: {
+            id: true,
+            text: true,
             createdAt: true,
             updatedAt: true,
-            status: true,
-            priority: true, // Including priority based on schema
-            assignees: {
-              select: { id: true, name: true, email: true },
-            },
-            team: {
-              select: { id: true, name: true, description: true },
-            },
-            comments: {
+            author: {
               select: {
                 id: true,
-                text: true,
-                createdAt: true,
-                updatedAt: true,
-                author: {
-                  select: { id: true, name: true, email: true },
-                },
-              },
-            },
-            subTasks: {
-              select: {
-                id: true,
-                title: true,
-                description: true,
-                status: true,
-                priority: true,
-                assignee: {
-                  select: { id: true, name: true, email: true },
-                },
-                estimatedHours: true,
-                actualHours: true,
-                completedAt: true,
-                createdAt: true,
-                updatedAt: true,
-              },
-            },
-            relatedTasks: {
-              select: {
-                id: true,
-                title: true,
-                status: true,
-                priority: true,
+                name: true,
+                email: true,
+                imageUrl: true,
               },
             },
             attachments: {
@@ -75,19 +80,96 @@ export async function getAllTaskAndSubTask(userId: string) {
               },
             },
           },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 10, // Limit to latest 10 comments
+        },
+        subTasks: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            assignee: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                imageUrl: true,
+              },
+            },
+            estimatedHours: true,
+            actualHours: true,
+            completedAt: true,
+            createdAt: true,
+            updatedAt: true,
+            comments: {
+              select: {
+                id: true,
+                text: true,
+                createdAt: true,
+                author: {
+                  select: {
+                    id: true,
+                    name: true,
+                    imageUrl: true,
+                  },
+                },
+              },
+              orderBy: {
+                createdAt: 'desc'
+              },
+              take: 5, // Limit to latest 5 comments per subtask
+            },
+          },
+          orderBy: {
+            createdAt: 'asc'
+          },
+        },
+        relatedTasks: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            priority: true,
+            deadline: true,
+          },
+          take: 5, // Limit to 5 related tasks
+        },
+        attachments: {
+          select: {
+            id: true,
+            name: true,
+            url: true,
+            type: true,
+            size: true,
+            createdAt: true,
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
         },
       },
+      orderBy: [
+        { deadline: 'asc' },
+        { createdAt: 'desc' }
+      ],
     });
 
-    if (!userWithTasks || !userWithTasks.tasks) {
-      throw new Error(`User with ID ${userId} not found or has no tasks.`);
+    if (!tasks.length) {
+      return []; // Return empty array instead of throwing error for no tasks
     }
 
-    return userWithTasks.tasks;
+    return tasks;
+
   } catch (error) {
-    console.error("Error retrieving tasks and subtasks:", error); // Log the full error
+    console.error("Error fetching tasks:", error);
     throw new Error(
-      "An error occurred while retrieving the tasks and subtasks.",
+      error instanceof Error
+        ? error.message
+        : "Failed to fetch tasks and subtasks"
     );
   }
 }

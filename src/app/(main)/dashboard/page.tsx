@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Task } from "@/types/enums";
 import { useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -24,6 +23,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { Task } from "@prisma/client";
+
 
 const ITEM_TYPE = "TASK";
 
@@ -220,36 +221,72 @@ const TaskColumn = ({
   );
 };
 
-const DashboardContent = () => {
-  const router = useRouter();
-  const { isLoaded, userId } = useAuth();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const DashboardContent = () => {
+    const router = useRouter();
+    const { isLoaded, userId } = useAuth();
+    const [tasks, setTasks] = useState<Task[]>([]); // Initialize with empty array
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      if (!userId) {
-        setError("User ID is not available.");
-        setLoading(false);
-        return;
+    useEffect(() => {
+      const fetchTasks = async () => {
+        if (!userId) {
+          setError("User ID is not available.");
+          setLoading(false);
+          return;
+        }
+
+        try {
+          const data = await getAllTaskAndSubTask(userId);
+          console.log(data);
+          // Ensure data.tasks exists before setting state
+          if (data) {
+            setTasks(data as Task[]);
+          } else {
+            setTasks([]);
+            // setError("No tasks found.");
+          }
+        } catch (err) {
+          setError("An error occurred while fetching tasks and subtasks.");
+          setTasks([]); // Ensure tasks is always an array
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      if (isLoaded && userId) {
+        fetchTasks();
       }
+    }, [isLoaded, userId]);
 
-      try {
-        const data = await getAllTaskAndSubTask(userId);
-        console.log(data);
-        setTasks(data.tasks as Task[]);
-      } catch {
-        setError("An error occurred while fetching tasks and subtasks.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    const tasksByStatus = useMemo(
+      () => ({
+        todo: tasks?.filter((task) => task.status === "TODO") ?? [],
+        inProgress: tasks?.filter((task) => task.status === "IN_PROGRESS") ?? [],
+        completed: tasks?.filter((task) => task.status === "COMPLETED") ?? [],
+        backlog: tasks?.filter((task) => task.status === "BACKLOG") ?? [],
+      }),
+      [tasks],
+    );
 
-    if (isLoaded && userId) {
-      fetchTasks();
-    }
-  }, [isLoaded, userId]);
+    const stats = useMemo(() => {
+      const totalTasks = tasks?.length ?? 0;
+      const completedTasks = tasksByStatus.completed.length;
+      const progressPercentage = totalTasks
+        ? (completedTasks / totalTasks) * 100
+        : 0;
+      const upcomingDeadlines = tasks?.filter(
+        (task) =>
+          new Date(task.deadline) > new Date() && task.status !== "COMPLETED",
+      ).length ?? 0;
+
+      return {
+        total: totalTasks,
+        completed: completedTasks,
+        progress: progressPercentage,
+        upcoming: upcomingDeadlines,
+      };
+    }, [tasks, tasksByStatus]);
 
   const moveTask = (task: Task, newStatus: string) => {
     setTasks((prevTasks) =>
@@ -260,33 +297,6 @@ const DashboardContent = () => {
     updateStatusofTask(task.id, newStatus as TaskStatus);
   };
 
-  const tasksByStatus = useMemo(
-    () => ({
-      todo: tasks.filter((task) => task.status === "TODO"),
-      inProgress: tasks.filter((task) => task.status === "IN_PROGRESS"),
-      completed: tasks.filter((task) => task.status === "COMPLETED"),
-      backlog: tasks.filter((task) => task.status === "BACKLOG"),
-    }),
-    [tasks],
-  );
-  const stats = useMemo(() => {
-    const totalTasks = tasks.length;
-    const completedTasks = tasksByStatus.completed.length;
-    const progressPercentage = totalTasks
-      ? (completedTasks / totalTasks) * 100
-      : 0;
-    const upcomingDeadlines = tasks.filter(
-      (task) =>
-        new Date(task.deadline) > new Date() && task.status !== "COMPLETED",
-    ).length;
-
-    return {
-      total: totalTasks,
-      completed: completedTasks,
-      progress: progressPercentage,
-      upcoming: upcomingDeadlines,
-    };
-  }, [tasks, tasksByStatus]);
 
   if (loading)
     return (
