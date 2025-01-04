@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { TaskStatus, Priority } from "@prisma/client";
-import { auth, currentUser } from '@clerk/nextjs/server'
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 interface CreateTaskInput {
   title: string;
@@ -13,15 +13,21 @@ interface CreateTaskInput {
 }
 
 export async function createTask(input: CreateTaskInput) {
-  if (!input || typeof input !== 'object') {
+  if (!input || typeof input !== "object") {
     throw new Error("Invalid input data");
   }
 
-  const { title, description, deadline, assigneeEmails = [], priority = Priority.MEDIUM } = input;
+  const {
+    title,
+    description,
+    deadline,
+    assigneeEmails = [],
+    priority = Priority.MEDIUM,
+  } = input;
 
   try {
     // Get the current user from Clerk
-    const { userId } = await auth()
+    const { userId } = await auth();
 
     if (!userId) {
       throw new Error("You must be logged in to create tasks");
@@ -52,12 +58,13 @@ export async function createTask(input: CreateTaskInput) {
     }
 
     // Find assignee users
-    const assignees = assigneeEmails.length > 0
-      ? await db.user.findMany({
-        where: { email: { in: assigneeEmails } },
-        select: { id: true }
-      })
-      : [];
+    const assignees =
+      assigneeEmails.length > 0
+        ? await db.user.findMany({
+            where: { email: { in: assigneeEmails } },
+            select: { id: true },
+          })
+        : [];
 
     // Create the task
     const newTask = await db.task.create({
@@ -69,22 +76,20 @@ export async function createTask(input: CreateTaskInput) {
         status: TaskStatus.TODO,
         startDate: new Date(),
         creatorId: userId, // Using Clerk userId
-        assignees: assignees.length > 0
-          ? { connect: assignees.map(user => ({ id: user.id })) }
-          : undefined
+        assignees:
+          assignees.length > 0
+            ? { connect: assignees.map((user) => ({ id: user.id })) }
+            : undefined,
       },
       include: {
         assignees: true,
         subTasks: true,
-      }
+      },
     });
 
     return newTask;
-
   } catch (error) {
     console.error("Server error creating task:", error);
-    throw error instanceof Error
-      ? error
-      : new Error("Failed to create task");
+    throw error instanceof Error ? error : new Error("Failed to create task");
   }
 }

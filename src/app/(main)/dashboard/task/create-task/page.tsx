@@ -73,7 +73,7 @@ const CreateTaskPage = () => {
       description: formData.get("description") as string,
       deadline: formData.get("deadline") as string,
       assigneeEmails: emails,
-      priority: "MEDIUM" as const // You can make this dynamic if needed
+      priority: "MEDIUM" as const, // You can make this dynamic if needed
     };
 
     // Validate required fields
@@ -94,15 +94,11 @@ const CreateTaskPage = () => {
               taskId: newTask.id,
               title: subtaskTitle,
               status: TaskStatus.TODO,
-            })
-          )
+            }),
+          ),
         );
 
-        showAlert(
-          "Success",
-          "Task created successfully.",
-          "success"
-        );
+        showAlert("Success", "Task created successfully.", "success");
 
         // Reset form
         form.reset();
@@ -114,7 +110,7 @@ const CreateTaskPage = () => {
       showAlert(
         "Error!",
         error instanceof Error ? error.message : "Failed to create task",
-        "error"
+        "error",
       );
     } finally {
       setLoading(false);
