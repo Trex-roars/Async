@@ -24,8 +24,6 @@ const CreateTaskPage = () => {
   const [loading, setLoading] = useState(false);
   const [emails, setEmails] = useState<string[]>([]);
   const [subtasks, setSubtasks] = useState<string[]>([]);
-  const [taskTitle, setTaskTitle] = useState<string>(""); // Controlled input for task title
-  const [description, setDescription] = useState<string>(""); // Controlled input for description
 
   const handleEmailInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -62,69 +60,66 @@ const CreateTaskPage = () => {
     setSubtasks(subtasks.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    const trimmedTitle = taskTitle.trim();
-    const trimmedDescription = description.trim();
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
 
-    // Check if task title and deadline are valid
-    if (!trimmedTitle || !e.target.deadline.value) {
-      showAlert("Error", "Title and deadline are required.", "error");
+    // Extract and validate the data
+    const taskData = {
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      deadline: formData.get("deadline") as string,
+      assigneeEmails: emails,
+      priority: "MEDIUM" as const // You can make this dynamic if needed
+    };
+
+    // Validate required fields
+    if (!taskData.title?.trim()) {
+      showAlert("Error!", "Please add a task title!", "error");
       setLoading(false);
       return;
     }
 
     try {
-      // Assuming that the emails fetched contain user IDs
-      const assignees = assigneeEmails.map((email) => {
-        const user = fetchedUsers.find((user) => user.email === email);
-        return user ? { id: user.id } : null;
-      }).filter(Boolean); // Filter out null values in case some emails don't match any user
+      const newTask = await createTask(taskData);
 
-      // Create the task data
-      const taskDataToCreate = {
-        title: trimmedTitle,
-        description: trimmedDescription,
-        deadline: new Date(e.target.deadline.value),
-        priority: "MEDIUM",
-        status: "TODO",
-        team: teamId || null, // Ensure team is null or valid teamId
-        assignees: assignees.length > 0 ? { connect: assignees } : undefined, // Don't pass empty assignees if no valid users
-        startDate: new Date(),
-      };
+      if (newTask) {
+        // Create subtasks only if main task was created successfully
+        await Promise.all(
+          subtasks.map((subtaskTitle) =>
+            createSubTask({
+              taskId: newTask.id,
+              title: subtaskTitle,
+              status: TaskStatus.TODO,
+            })
+          )
+        );
 
-      console.log("Task Data to be created:", taskDataToCreate);
+        showAlert(
+          "Success",
+          "Task created successfully.",
+          "success"
+        );
 
-      // Call the backend to create the task
-      const createdTask = await createTask(taskDataToCreate);
-
-      // Create subtasks
-      await Promise.all(
-        subtasks.map((subtaskTitle) =>
-          createSubTask({
-            taskId: createdTask.id,
-            title: subtaskTitle,
-            status: TaskStatus.TODO,
-          })
-        )
+        // Reset form
+        form.reset();
+        setEmails([]);
+        setSubtasks([]);
+      }
+    } catch (error) {
+      console.error("Task creation error:", error);
+      showAlert(
+        "Error!",
+        error instanceof Error ? error.message : "Failed to create task",
+        "error"
       );
-
-      // Success alert
-      showAlert("Success", "Your task has been created successfully.", "success");
-      setTaskTitle("");
-      setDescription("");
-      setEmails([]);
-      setSubtasks([]);
-    } catch (error: any) {
-      showAlert("Error", error.message || "Failed to create the task.", "error");
     } finally {
       setLoading(false);
     }
   };
-
-
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-background via-background/95 to-background/90">
@@ -145,8 +140,6 @@ const CreateTaskPage = () => {
                   <Input
                     required
                     name="title"
-                    value={taskTitle}
-                    onChange={(e) => setTaskTitle(e.target.value)} // Controlled input
                     placeholder="What needs to be done?"
                     className="border-primary/20 focus:border-primary"
                   />
@@ -159,8 +152,6 @@ const CreateTaskPage = () => {
                   </label>
                   <Textarea
                     name="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)} // Controlled input
                     placeholder="Add more details about this task..."
                     className="min-h-[100px] border-primary/20 focus:border-primary"
                   />
@@ -176,7 +167,6 @@ const CreateTaskPage = () => {
                     required
                     name="deadline"
                     className="border-primary/20 focus:border-primary"
-                    disabled={loading} // Disable input when loading
                   />
                 </div>
 
@@ -188,7 +178,6 @@ const CreateTaskPage = () => {
                   <Input
                     placeholder="Enter email and press Enter"
                     onKeyDown={handleEmailInput}
-                    disabled={loading} // Disable input when loading
                     className="border-primary/20 focus:border-primary"
                   />
                   <div className="mt-2 flex flex-wrap gap-2">
@@ -218,7 +207,6 @@ const CreateTaskPage = () => {
                   <Input
                     placeholder="Enter subtask and press Enter"
                     onKeyDown={handleSubtaskInput}
-                    disabled={loading} // Disable input when loading
                     className="border-primary/20 focus:border-primary"
                   />
                   <div className="mt-2 space-y-2">
