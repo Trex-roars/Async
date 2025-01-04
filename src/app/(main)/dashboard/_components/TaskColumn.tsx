@@ -1,6 +1,6 @@
 // components/TaskColumn.tsx
 import { Badge } from "@/components/ui/badge";
-import { SubTask } from "@/types";
+import { SubTask } from "@/types/enums";
 import { AnimatePresence } from "framer-motion";
 import { useDrop } from "react-dnd";
 import { SubTaskCard } from "./SubTaskCard";

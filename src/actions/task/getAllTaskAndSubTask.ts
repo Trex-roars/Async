@@ -9,8 +9,8 @@ export async function getAllTaskAndSubTask(userId: string) {
       throw new Error("User ID is required.");
     }
 
-    // Fetch tasks assigned to the user along with subtasks and other related data
-    const userTasks = await db.user.findUnique({
+    // Fetch tasks assigned to the user along with related data
+    const userWithTasks = await db.user.findUnique({
       where: { id: userId },
       include: {
         tasks: {
@@ -18,28 +18,72 @@ export async function getAllTaskAndSubTask(userId: string) {
             id: true,
             title: true,
             description: true,
-            deadline: true, // Include the deadline of the task
-            createdAt: true, // Include the createdAt field
-            updatedAt: true, // Include the updatedAt field
+            deadline: true,
+            createdAt: true,
+            updatedAt: true,
             status: true,
+            priority: true, // Including priority based on schema
             assignees: {
               select: { id: true, name: true, email: true },
             },
-            team: true,
-            comments: { include: { author: true } },
-            timeline: { include: { previousTask: true, nextTask: true } },
-            subTasks: true, // Assuming you want subtasks included as well
-            relatedTasks: true, // Related tasks (if you want them as well)
+            team: {
+              select: { id: true, name: true, description: true },
+            },
+            comments: {
+              select: {
+                id: true,
+                text: true,
+                createdAt: true,
+                updatedAt: true,
+                author: {
+                  select: { id: true, name: true, email: true },
+                },
+              },
+            },
+            subTasks: {
+              select: {
+                id: true,
+                title: true,
+                description: true,
+                status: true,
+                priority: true,
+                assignee: {
+                  select: { id: true, name: true, email: true },
+                },
+                estimatedHours: true,
+                actualHours: true,
+                completedAt: true,
+                createdAt: true,
+                updatedAt: true,
+              },
+            },
+            relatedTasks: {
+              select: {
+                id: true,
+                title: true,
+                status: true,
+                priority: true,
+              },
+            },
+            attachments: {
+              select: {
+                id: true,
+                name: true,
+                url: true,
+                type: true,
+                size: true,
+              },
+            },
           },
         },
       },
     });
 
-    if (!userTasks) {
-      throw new Error(`User with ID ${userId} not found.`);
+    if (!userWithTasks || !userWithTasks.tasks) {
+      throw new Error(`User with ID ${userId} not found or has no tasks.`);
     }
 
-    return userTasks;
+    return userWithTasks.tasks;
   } catch (error) {
     console.error("Error retrieving tasks and subtasks:", error); // Log the full error
     throw new Error(

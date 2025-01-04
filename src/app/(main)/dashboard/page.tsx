@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Task } from "@/types";
+import { Task } from "@/types/enums";
 import { useAuth } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -199,8 +199,9 @@ const TaskColumn = ({
   return (
     <div
       ref={dropRef}
-      className={`rounded-xl border-2 ${columnStyles[status]} ${isOver ? "ring-2 ring-primary" : ""
-        } bg-background/50 backdrop-blur-sm transition-all duration-300`}
+      className={`rounded-xl border-2 ${columnStyles[status]} ${
+        isOver ? "ring-2 ring-primary" : ""
+      } bg-background/50 backdrop-blur-sm transition-all duration-300`}
     >
       <div className="p-4">
         <div className="mb-6 flex items-center justify-between">
