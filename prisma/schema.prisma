@@ -14,54 +14,22 @@ model User {
   imageUrl            String?
   email               String            @unique
   role                Role              @default(USER)
-  teams               Team[]            @relation("TeamMembers")
+  teams               TeamMember[]      // Changed to many-to-many through TeamMember
   ownedTeams          Team[]            @relation("TeamOwner")
-  tasks               Task[]            @relation("AssignedTasks")
+  assignedTasks       Task[]            @relation("AssignedTasks")
   createdTasks        Task[]            @relation("TaskCreator")
   comments            Comment[]
   notifications       Notification[]
-  settings            UserSettings?
   status              UserStatus        @default(ACTIVE)
   department          String?
   position            String?
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
   lastActive          DateTime          @default(now())
-  managedTeamSettings TeamSettings[]    @relation("TeamSettingsManager")
-  taskViews           TaskView[]
+  managedTeams        TeamSettings[]    @relation("TeamSettingsManager")
   workspaces          WorkspaceMember[]
-  // Add activity logging
-  activityLogs        ActivityLog[]
-  SubTask             SubTask[]
-  TeamSettings        TeamSettings[]
-}
-
-// ===== USER SETTINGS MODEL =====
-model UserSettings {
-  id                 String        @id @default(cuid())
-  user               User          @relation(fields: [userId], references: [id])
-  userId             String        @unique
-  emailNotifications Boolean       @default(true)
-  pushNotifications  Boolean       @default(true)
-  theme              Theme         @default(DARK)
-  language           String        @default("en")
-  timeZone           String        @default("UTC")
-  workingHours       WorkingHours?
-  defaultView        ViewType      @default(LIST)
-}
-
-// ===== WORKING HOURS =====
-model WorkingHours {
-  id           String       @id @default(cuid())
-  userSettings UserSettings @relation(fields: [settingsId], references: [id])
-  settingsId   String       @unique
-  monday       Int          @default(8)
-  tuesday      Int          @default(8)
-  wednesday    Int          @default(8)
-  thursday     Int          @default(8)
-  friday       Int          @default(8)
-  saturday     Int          @default(0)
-  sunday       Int          @default(0)
+  assignedSubTasks    SubTask[]
+  defaultAssigneeFor  TeamSettings[]    @relation("DefaultAssignee")
 }
 
 // ===== WORKSPACE MODEL =====
@@ -70,79 +38,86 @@ model Workspace {
   name        String
   description String?
   members     WorkspaceMember[]
-  teams       Team[]
+  teams       WorkspaceTeam[]   // Changed to many-to-many through WorkspaceTeam
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 }
 
 model WorkspaceMember {
   id          String        @id @default(cuid())
-  workspace   Workspace     @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   workspaceId String
-  user        User          @relation(fields: [userId], references: [id])
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   role        WorkspaceRole @default(MEMBER)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
   @@unique([workspaceId, userId])
-}
-
-// ===== TASK VIEW MODEL =====
-model TaskView {
-  id        String   @id @default(cuid())
-  name      String
-  type      ViewType
-  filters   Json?
-  sorting   Json?
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  isDefault Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-// ===== ACTIVITY LOG =====
-model ActivityLog {
-  id         String   @id @default(cuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
-  action     String
-  entityType String
-  entityId   String
-  metadata   Json?
-  createdAt  DateTime @default(now())
+  @@index([userId])
+  @@index([workspaceId])
 }
 
 // ===== TEAM MODEL =====
 model Team {
-  id          String        @id @default(cuid())
+  id          String         @id @default(cuid())
   name        String
   description String?
-  owner       User          @relation("TeamOwner", fields: [ownerId], references: [id])
+  owner       User           @relation("TeamOwner", fields: [ownerId], references: [id])
   ownerId     String
-  members     User[]        @relation("TeamMembers")
-  tasks       Task[]        @relation("TeamTasks")
+  members     TeamMember[]
+  tasks       Task[]         @relation("TeamTasks")
   isArchived  Boolean       @default(false)
   settings    TeamSettings?
   department  String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  workspaces  WorkspaceTeam[]
 
-  Workspace Workspace[]
+  @@index([ownerId])
+}
+
+// Added TeamMember model for many-to-many relationship
+model TeamMember {
+  id        String   @id @default(cuid())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      Role     @default(USER)
+  joinedAt  DateTime @default(now())
+
+  @@unique([teamId, userId])
+  @@index([userId])
+  @@index([teamId])
+}
+
+// Added WorkspaceTeam model for many-to-many relationship
+model WorkspaceTeam {
+  id          String    @id @default(cuid())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspaceId String
+  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId      String
+  createdAt   DateTime  @default(now())
+
+  @@unique([workspaceId, teamId])
+  @@index([teamId])
+  @@index([workspaceId])
 }
 
 // ===== TEAM SETTINGS MODEL =====
 model TeamSettings {
   id                String     @id @default(cuid())
-  team              Team       @relation(fields: [teamId], references: [id])
+  team              Team       @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId            String     @unique
-  defaultAssignee   User?      @relation(fields: [defaultAssigneeId], references: [id])
+  defaultAssignee   User?      @relation("DefaultAssignee", fields: [defaultAssigneeId], references: [id])
   defaultAssigneeId String?
   visibility        Visibility @default(PRIVATE)
   autoAssignment    Boolean    @default(false)
+  managers          User[]     @relation("TeamSettingsManager")
 
-  User User[] @relation("TeamSettingsManager")
+  @@index([defaultAssigneeId])
 }
 
 // ===== TASK MODEL =====
@@ -156,8 +131,8 @@ model Task {
   assignees      User[]       @relation("AssignedTasks")
   creator        User         @relation("TaskCreator", fields: [creatorId], references: [id])
   creatorId      String
-  teamId         String?
   team           Team?        @relation("TeamTasks", fields: [teamId], references: [id])
+  teamId         String?
   subTasks       SubTask[]
   comments       Comment[]
   relatedTasks   Task[]       @relation("RelatedTasks")
@@ -170,6 +145,9 @@ model Task {
   completedAt    DateTime?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
+
+  @@index([creatorId])
+  @@index([teamId])
 }
 
 // ===== SUBTASK MODEL =====
@@ -179,7 +157,7 @@ model SubTask {
   description    String?
   status         TaskStatus @default(TODO)
   priority       Priority   @default(MEDIUM)
-  parentTask     Task       @relation(fields: [taskId], references: [id])
+  parentTask     Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId         String
   assignee       User?      @relation(fields: [assigneeId], references: [id])
   assigneeId     String?
@@ -189,6 +167,9 @@ model SubTask {
   completedAt    DateTime?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+
+  @@index([taskId])
+  @@index([assigneeId])
 }
 
 // ===== COMMENT MODEL =====
@@ -197,16 +178,21 @@ model Comment {
   text          String
   author        User         @relation(fields: [authorId], references: [id])
   authorId      String
-  task          Task?        @relation(fields: [taskId], references: [id])
-  subTask       SubTask?     @relation(fields: [subTaskId], references: [id])
+  task          Task?        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  subTask       SubTask?     @relation(fields: [subTaskId], references: [id], onDelete: Cascade)
   taskId        String?
   subTaskId     String?
   attachments   Attachment[]
-  parentComment Comment?     @relation("CommentReplies", fields: [parentId], references: [id])
+  parentComment Comment?     @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
   parentId      String?
   replies       Comment[]    @relation("CommentReplies")
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+
+  @@index([authorId])
+  @@index([taskId])
+  @@index([subTaskId])
+  @@index([parentId])
 }
 
 // ===== NOTIFICATION MODEL =====
@@ -215,10 +201,12 @@ model Notification {
   type      NotificationType
   title     String
   message   String
-  user      User             @relation(fields: [userId], references: [id])
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   isRead    Boolean          @default(false)
   createdAt DateTime         @default(now())
+
+  @@index([userId])
 }
 
 // ===== ATTACHMENT MODEL =====
@@ -228,14 +216,15 @@ model Attachment {
   url       String
   type      String
   size      Int
-  task      Task?    @relation(fields: [taskId], references: [id])
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId    String?
-  comment   Comment? @relation(fields: [commentId], references: [id])
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId String?
   createdAt DateTime @default(now())
+
+  @@index([taskId])
+  @@index([commentId])
 }
-
-
 
 // ===== ENUMS =====
 enum TaskStatus {
@@ -248,7 +237,6 @@ enum TaskStatus {
   CANCELLED
 }
 
-// ===== ADDITIONAL ENUMS =====
 enum ViewType {
   LIST
   BOARD

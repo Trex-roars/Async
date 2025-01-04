@@ -1,6 +1,6 @@
 // components/SubTaskCard.tsx
 import { Card } from "@/components/ui/card";
-import { SubTask, TaskStatus } from "@/types";
+import { SubTask, TaskStatus } from "@/types/enums";
 import { motion } from "framer-motion";
 import { useDrag } from "react-dnd";
 import { StatusIcon } from "./StatusIcon";

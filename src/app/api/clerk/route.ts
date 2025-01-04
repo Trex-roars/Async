@@ -1,11 +1,15 @@
-import {db} from "@/lib/db"
+import { db } from "@/lib/db";
 
 export const POST = async (req: Request) => {
   try {
     const { data } = await req.json();
 
     // Validate the necessary fields from the webhook payload
-    if (!data || !data.email_addresses || !data.email_addresses[0]?.email_address) {
+    if (
+      !data ||
+      !data.email_addresses ||
+      !data.email_addresses[0]?.email_address
+    ) {
       return new Response("Invalid webhook payload", { status: 400 });
     }
 
