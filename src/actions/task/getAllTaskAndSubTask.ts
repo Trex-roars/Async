@@ -11,10 +11,7 @@ export async function getAllTaskAndSubTask(userId: string) {
     // Fetch tasks where user is either assignee or creator
     const tasks = await db.task.findMany({
       where: {
-        OR: [
-          { assignees: { some: { id: userId } } },
-          { creatorId: userId }
-        ]
+        OR: [{ assignees: { some: { id: userId } } }, { creatorId: userId }],
       },
       select: {
         id: true,
@@ -81,7 +78,7 @@ export async function getAllTaskAndSubTask(userId: string) {
             },
           },
           orderBy: {
-            createdAt: 'desc'
+            createdAt: "desc",
           },
           take: 10, // Limit to latest 10 comments
         },
@@ -119,13 +116,13 @@ export async function getAllTaskAndSubTask(userId: string) {
                 },
               },
               orderBy: {
-                createdAt: 'desc'
+                createdAt: "desc",
               },
               take: 5, // Limit to latest 5 comments per subtask
             },
           },
           orderBy: {
-            createdAt: 'asc'
+            createdAt: "asc",
           },
         },
         relatedTasks: {
@@ -148,14 +145,11 @@ export async function getAllTaskAndSubTask(userId: string) {
             createdAt: true,
           },
           orderBy: {
-            createdAt: 'desc'
+            createdAt: "desc",
           },
         },
       },
-      orderBy: [
-        { deadline: 'asc' },
-        { createdAt: 'desc' }
-      ],
+      orderBy: [{ deadline: "asc" }, { createdAt: "desc" }],
     });
 
     if (!tasks.length) {
@@ -163,13 +157,12 @@ export async function getAllTaskAndSubTask(userId: string) {
     }
 
     return tasks;
-
   } catch (error) {
     console.error("Error fetching tasks:", error);
     throw new Error(
       error instanceof Error
         ? error.message
-        : "Failed to fetch tasks and subtasks"
+        : "Failed to fetch tasks and subtasks",
     );
   }
 }
