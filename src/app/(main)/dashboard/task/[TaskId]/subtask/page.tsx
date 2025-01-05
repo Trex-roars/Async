@@ -1,13 +1,19 @@
-'use client'
+"use client";
 
-import { useState, use } from 'react';
-import { Button } from '@/components/ui/button';
-import { AlertCircle, Plus, X, CheckCircle2 } from 'lucide-react';
+import { useState, use } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Plus, X, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAlert } from "@/hooks/Alert-Provider";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
-import { createSubTask } from '@/actions/subtask';
-
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { createSubTask } from "@/actions/subtask";
 
 const Page = ({ params }: { params: Promise<{ TaskId: string }> }) => {
   const { TaskId } = use(params);
@@ -39,24 +45,25 @@ const Page = ({ params }: { params: Promise<{ TaskId: string }> }) => {
         await createSubTask({
           taskId: TaskId,
           title: subtaskTitle,
-          status: 'TODO',
+          status: "TODO",
         });
       }
-      showAlert('Subtasks created successfully', 'success');
-    } catch  {
-      showAlert('Error creating subtasks', 'error');
+      showAlert("Subtasks created successfully", "success");
+    } catch {
+      showAlert("Error creating subtasks", "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 p-4 flex items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-background to-background/80 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Create Subtasks</CardTitle>
           <CardDescription>
-            Add subtasks to break down your main task into smaller, manageable pieces
+            Add subtasks to break down your main task into smaller, manageable
+            pieces
           </CardDescription>
         </CardHeader>
 
@@ -72,15 +79,15 @@ const Page = ({ params }: { params: Promise<{ TaskId: string }> }) => {
                 <Input
                   placeholder="Type a subtask and press Enter"
                   onKeyDown={handleSubtaskInput}
-                  className="pr-10 border-primary/20 focus:border-primary transition-colors"
+                  className="border-primary/20 pr-10 transition-colors focus:border-primary"
                 />
-                <Plus className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground opacity-50" />
+                <Plus className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground opacity-50" />
               </div>
             </div>
 
             <div className="space-y-2">
               {subtasks.length > 0 && (
-                <div className="flex items-center gap-2 mb-2">
+                <div className="mb-2 flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
                   <span className="text-sm font-medium text-muted-foreground">
                     Added Subtasks ({subtasks.length})
@@ -98,7 +105,7 @@ const Page = ({ params }: { params: Promise<{ TaskId: string }> }) => {
                     <button
                       type="button"
                       onClick={() => handleRemoveSubtask(index)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                      className="text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -111,7 +118,7 @@ const Page = ({ params }: { params: Promise<{ TaskId: string }> }) => {
           <CardFooter>
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary transition-all duration-300"
+              className="w-full bg-gradient-to-r from-primary to-primary/90 transition-all duration-300 hover:from-primary/90 hover:to-primary"
               disabled={loading || subtasks.length === 0}
             >
               {loading ? (
@@ -122,7 +129,8 @@ const Page = ({ params }: { params: Promise<{ TaskId: string }> }) => {
               ) : (
                 <span className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  Create {subtasks.length} Subtask{subtasks.length !== 1 ? 's' : ''}
+                  Create {subtasks.length} Subtask
+                  {subtasks.length !== 1 ? "s" : ""}
                 </span>
               )}
             </Button>
