@@ -32,7 +32,10 @@ import { useClerk } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 export function NavUser() {
-  const { userData, isLoading } = useUser();
+  const { userData, isLoading } = useUser() as {
+    userData: { avatar: string; name: string; email: string };
+    isLoading: boolean;
+  };
   const { isMobile } = useSidebar();
   const { signOut } = useClerk();
   const router = useRouter();
