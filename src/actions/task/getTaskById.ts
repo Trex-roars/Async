@@ -1,6 +1,6 @@
-'use server';
+"use server";
 
-import { db } from '@/lib/db'
+import { db } from "@/lib/db";
 
 export async function getTaskById(id: string) {
   try {
@@ -17,7 +17,13 @@ export async function getTaskById(id: string) {
         },
         team: true,
         subTasks: {
-          select: { id: true, title: true, status: true, assigneeId: true, createdAt: true },
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            assigneeId: true,
+            createdAt: true,
+          },
         },
         comments: {
           include: {
@@ -28,16 +34,18 @@ export async function getTaskById(id: string) {
             },
           },
         },
-        relatedTasks: {  // Fetch related tasks
+        relatedTasks: {
+          // Fetch related tasks
           select: { id: true, title: true, status: true },
         },
-        prerequisiteOf: {  // Fetch prerequisite tasks
+        prerequisiteOf: {
+          // Fetch prerequisite tasks
           select: { id: true, title: true, status: true },
         },
-        attachments: {  // Fetch attachments directly related to the task
+        attachments: {
+          // Fetch attachments directly related to the task
           select: { id: true, name: true, url: true, type: true, size: true },
         },
-
       },
     });
 
@@ -46,9 +54,10 @@ export async function getTaskById(id: string) {
     }
     console.log("Task retrieved successfully:", task);
     return task;
-
   } catch (error: any) {
     console.error("Error retrieving task:", error.message);
-    throw new Error(error.message || "An error occurred while retrieving the task.");
+    throw new Error(
+      error.message || "An error occurred while retrieving the task.",
+    );
   }
 }
