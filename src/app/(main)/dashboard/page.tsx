@@ -28,7 +28,7 @@ const createCacheKey = (userId: string | null) =>
 // Fetcher function for SWR
 const fetchTasks = async (userId: string) => {
   const data = await getAllTaskAndSubTask(userId);
-  return data as Task[];
+  return data as unknown as Task[];
 };
 
 // Memoized stats calculator
