@@ -1,3 +1,5 @@
+'use server'
+
 import { db } from "@/lib/db";
 
 export async function getCommentsOnTask(taskId: string) {
@@ -43,7 +45,6 @@ export async function getCommentsOnSubTask(subTaskId: string) {
     const comments = await db.comment.findMany({
       where: {
         subTaskId,
-        // Only get top-level comments (no parentId)
         parentId: null
       },
       include: {

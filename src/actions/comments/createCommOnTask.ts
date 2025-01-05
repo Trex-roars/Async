@@ -1,5 +1,6 @@
+'use server'
+
 import { db } from "@/lib/db";
-import { Comment } from "@prisma/client";
 
 type CreateTaskCommentInput = {
   taskId: string;
@@ -11,7 +12,7 @@ export async function createCommentOnTask({
   taskId,
   text,
   authorId,
-}: CreateTaskCommentInput): Promise<Comment> {
+}: CreateTaskCommentInput) {
   try {
     // Input validation
     if (!text?.trim()) {
