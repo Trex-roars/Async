@@ -74,10 +74,10 @@ const DashboardContent = () => {
     createCacheKey(userId),
     () => (userId ? fetchTasks(userId) : null),
     {
-      revalidateOnFocus: false, // Disable automatic revalidation on window focus
-      revalidateOnReconnect: true, // Enable revalidation on reconnect
-      dedupingInterval: 5000, // Dedupe requests within 5 seconds
-      keepPreviousData: true, // Keep showing old data while fetching new data
+      revalidateOnFocus: false, // Won't refetch when tab regains focus
+      revalidateOnReconnect: true, // Will refetch when internet reconnects
+      dedupingInterval: 50000, // Prevents duplicate requests within 5 seconds
+      keepPreviousData: true, // Shows cached data while fetching new data
     },
   );
 
