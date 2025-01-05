@@ -338,7 +338,7 @@ const DashboardContent = () => {
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => router.push("/dashboard/task/createTask")}
+                onClick={() => router.push("/dashboard/task/create-task")}
               >
                 <Plus className="h-4 w-4" />
                 Create Task
