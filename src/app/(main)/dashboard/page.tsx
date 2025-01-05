@@ -40,7 +40,7 @@ const DashboardContent = () => {
         console.log(data);
         // Ensure data.tasks exists before setting state
         if (data) {
-          setTasks(data as Task[]);
+          setTasks(data as unknown as Task[]);
         } else {
           setTasks([]);
           // setError("No tasks found.");
@@ -91,10 +91,10 @@ const DashboardContent = () => {
   const moveTask = (task: Task, newStatus: string) => {
     setTasks((prevTasks) =>
       prevTasks.map((t) =>
-        t.id === task.id ? { ...t, status: newStatus } : t,
+        t.id === task.id ? { ...t, status: newStatus as Task["status"] } : t,
       ),
     );
-    updateStatusofTask(task.id, newStatus as TaskStatus);
+    updateStatusofTask(task.id, newStatus as Task["status"]);
   };
 
   if (loading)
