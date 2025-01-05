@@ -3,21 +3,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
-import {
-  AlertCircle,
-  Calendar,
-  Users
-} from "lucide-react";
+import { AlertCircle, Calendar, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDrag } from "react-dnd";
 import { StatusIcon } from "./StatusIcon";
 
-
 const ITEM_TYPE = "TASK";
 
 type TaskStatus = "TODO" | "IN_PROGRESS" | "COMPLETED" | "BACKLOG";
-
-
 
 export const TaskCard = ({ task }: { task: Task }) => {
   const router = useRouter();

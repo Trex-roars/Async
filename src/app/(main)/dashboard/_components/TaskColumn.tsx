@@ -39,8 +39,9 @@ export const SubTaskColumn = ({
   return (
     <div
       ref={dropRef}
-      className={`rounded-xl border-2 ${columnStyles[status]} ${isOver ? "ring-2 ring-primary" : ""
-        } bg-background/50 backdrop-blur-sm transition-all duration-300`}
+      className={`rounded-xl border-2 ${columnStyles[status]} ${
+        isOver ? "ring-2 ring-primary" : ""
+      } bg-background/50 backdrop-blur-sm transition-all duration-300`}
     >
       <div className="p-4">
         <div className="mb-6 flex items-center justify-between">
@@ -92,8 +93,9 @@ export const TaskColumn = ({
   return (
     <div
       ref={dropRef}
-      className={`rounded-xl border-2 ${columnStyles[status]} ${isOver ? "ring-2 ring-primary" : ""
-        } bg-background/50 backdrop-blur-sm transition-all duration-300`}
+      className={`rounded-xl border-2 ${columnStyles[status]} ${
+        isOver ? "ring-2 ring-primary" : ""
+      } bg-background/50 backdrop-blur-sm transition-all duration-300`}
     >
       <div className="p-4">
         <div className="mb-6 flex items-center justify-between">
