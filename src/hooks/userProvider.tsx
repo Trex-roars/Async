@@ -17,6 +17,7 @@ export function UserProvider({ children }) {
             : user?.username || "User",
         email: user?.emailAddresses?.[0]?.emailAddress || "user@example.com",
         avatar: user?.imageUrl || "",
+        id: user?.id,
       }
     : null;
 

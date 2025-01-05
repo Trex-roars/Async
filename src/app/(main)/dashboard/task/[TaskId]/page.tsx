@@ -39,7 +39,7 @@ export default function TaskPage({
     const fetchTask = async () => {
       try {
         const response = await getTaskById(TaskId);
-        setTask(response);
+        setTask(response as TaskMain);
       } catch {
         setError("Failed to load task details");
       } finally {
@@ -53,21 +53,25 @@ export default function TaskPage({
   const subtasksByStatus = useMemo(() => {
     if (!task?.subTasks) return {};
     return {
-      todo: task.subTasks.filter((subtask) => subtask.status === "TODO"),
+      todo: task.subTasks.filter(
+        (subtask: SubTask) => subtask.status === "TODO",
+      ),
       inProgress: task.subTasks.filter(
-        (subtask) => subtask.status === "IN_PROGRESS",
+        (subtask: SubTask) => subtask.status === "IN_PROGRESS",
       ),
       completed: task.subTasks.filter(
-        (subtask) => subtask.status === "COMPLETED",
+        (subtask: SubTask) => subtask.status === "COMPLETED",
       ),
-      backlog: task.subTasks.filter((subtask) => subtask.status === "BACKLOG"),
+      backlog: task.subTasks.filter(
+        (subtask: SubTask) => subtask.status === "BACKLOG",
+      ),
     };
   }, [task?.subTasks]);
 
   const taskProgress = useMemo(() => {
     if (!task?.subTasks?.length) return 0;
     const completedTasks = task.subTasks.filter(
-      (subtask) => subtask.status === "COMPLETED",
+      (subtask: SubTask) => subtask.status === "COMPLETED",
     ).length;
     return Math.round((completedTasks / task.subTasks.length) * 100);
   }, [task?.subTasks]);
@@ -75,7 +79,7 @@ export default function TaskPage({
   const moveSubtask = async (subtask: SubTask, newStatus: string) => {
     if (!task) return;
 
-    setTask((prevTask) => {
+    setTask((prevTask: any) => {
       if (!prevTask) return null;
       return {
         ...prevTask,
@@ -117,41 +121,43 @@ export default function TaskPage({
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="min-h-screen w-full bg-gradient-to-b from-background to-background/80">
-        <div className="mx-auto max-w-7xl space-y-8 p-4 sm:p-6">
-          {/* Task Header Section */}
-          <div className="relative rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-background p-6 backdrop-blur-sm">
-            <div className="flex flex-col gap-4">
+        <div className="mx-auto max-w-7xl p-6">
+          {/* Enhanced Header Section */}
+          <div className="mb-8 rounded-xl bg-gradient-to-r from-primary/10 via-primary/5 to-background p-8 shadow-lg backdrop-blur-sm">
+            <div className="flex flex-col gap-6">
               <div className="flex items-start justify-between">
-                <div>
-                  <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                <div className="space-y-2">
+                  <h1 className="text-4xl font-bold tracking-tight text-foreground">
                     {task.title}
                   </h1>
-                  <p className="mt-2 max-w-2xl text-muted-foreground">
+                  <p className="max-w-2xl text-lg text-muted-foreground">
                     {task.description}
                   </p>
                 </div>
-                {/* TODO: Add a SubTask option */}
                 <Button
                   variant="outline"
-                  className="gap-2"
-                  onClick={() => {
-                    router.push(`/dashboard/task/${TaskId}/subtask`);
-                  }}
+                  size="lg"
+                  className="gap-2 shadow-sm transition-all hover:shadow-md"
+                  onClick={() =>
+                    router.push(`/dashboard/task/${TaskId}/subtask`)
+                  }
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-5 w-5" />
                   Add Subtask
                 </Button>
               </div>
 
-              {/* Task Meta Information */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-                <Card>
-                  <CardContent className="flex items-center gap-2 p-4">
-                    <Calendar className="h-5 w-5 text-muted-foreground" />
+              {/* Enhanced Meta Information */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <Card className="bg-background/60 backdrop-blur-sm transition-all hover:shadow-md">
+                  <CardContent className="flex items-center gap-4 p-6">
+                    <Calendar className="h-8 w-8 text-primary" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Deadline</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Deadline
+                      </p>
                       <p
-                        className={`font-medium ${isOverdue ? "text-red-500" : ""}`}
+                        className={`text-lg font-semibold ${isOverdue ? "text-red-500" : "text-foreground"}`}
                       >
                         {new Date(task.deadline).toLocaleDateString()}
                       </p>
@@ -159,26 +165,34 @@ export default function TaskPage({
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardContent className="flex items-center gap-2 p-4">
-                    <Clock className="h-5 w-5 text-muted-foreground" />
+                <Card className="bg-background/60 backdrop-blur-sm transition-all hover:shadow-md">
+                  <CardContent className="flex items-center gap-4 p-6">
+                    <Clock className="h-8 w-8 text-primary" />
                     <div>
-                      <p className="text-sm text-muted-foreground">Created</p>
-                      <p className="font-medium">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Created
+                      </p>
+                      <p className="text-lg font-semibold text-foreground">
                         {new Date(task.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardContent className="flex items-center gap-2 p-4">
-                    <Users className="h-5 w-5 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Assignees</p>
-                      <div className="flex flex-wrap gap-1">
+                <Card className="bg-background/60 backdrop-blur-sm transition-all hover:shadow-md">
+                  <CardContent className="flex items-center gap-4 p-6">
+                    <Users className="h-8 w-8 text-primary" />
+                    <div className="w-full">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Assignees
+                      </p>
+                      <div className="mt-1 flex flex-wrap gap-2">
                         {task.assignees.map((assignee) => (
-                          <Badge key={assignee.id} variant="secondary">
+                          <Badge
+                            key={assignee.id}
+                            variant="secondary"
+                            className="px-3 py-1 text-sm font-medium"
+                          >
                             {assignee.name}
                           </Badge>
                         ))}
@@ -187,14 +201,16 @@ export default function TaskPage({
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardContent className="flex items-center gap-2 p-4">
-                    <BarChart2 className="h-5 w-5 text-muted-foreground" />
+                <Card className="bg-background/60 backdrop-blur-sm transition-all hover:shadow-md">
+                  <CardContent className="flex items-center gap-4 p-6">
+                    <BarChart2 className="h-8 w-8 text-primary" />
                     <div className="w-full">
-                      <p className="text-sm text-muted-foreground">Progress</p>
-                      <div className="flex items-center gap-2">
-                        <Progress value={taskProgress} className="flex-1" />
-                        <span className="text-sm font-medium">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Progress
+                      </p>
+                      <div className="mt-2 flex items-center gap-3">
+                        <Progress value={taskProgress} className="h-2 flex-1" />
+                        <span className="text-lg font-semibold text-foreground">
                           {taskProgress}%
                         </span>
                       </div>
@@ -204,40 +220,56 @@ export default function TaskPage({
               </div>
             </div>
           </div>
-          <CommentSection taskId={TaskId} />
-          {/* Task Columns */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <SubTaskColumn
-              title="To Do"
-              tasks={subtasksByStatus.todo || []}
-              status="TODO"
-              onMoveTask={moveSubtask}
-              itemType={SUBTASK_ITEM_TYPE}
-            />
-            <SubTaskColumn
-              title="In Progress"
-              tasks={subtasksByStatus.inProgress || []}
-              status="IN_PROGRESS"
-              onMoveTask={moveSubtask}
-              itemType={SUBTASK_ITEM_TYPE}
-            />
-            <SubTaskColumn
-              title="Completed"
-              tasks={subtasksByStatus.completed || []}
-              status="COMPLETED"
-              onMoveTask={moveSubtask}
-              itemType={SUBTASK_ITEM_TYPE}
-            />
-          </div>
 
-          <div className="mt-6">
-            <SubTaskColumn
-              title="Backlog"
-              tasks={subtasksByStatus.backlog || []}
-              status="BACKLOG"
-              onMoveTask={moveSubtask}
-              itemType={SUBTASK_ITEM_TYPE}
-            />
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+            {/* Main Task Columns */}
+            <div className="lg:col-span-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <SubTaskColumn
+                  title="To Do"
+                  tasks={subtasksByStatus.todo || []}
+                  status="TODO"
+                  onMoveTask={moveSubtask}
+                  itemType={SUBTASK_ITEM_TYPE}
+                />
+                <SubTaskColumn
+                  title="In Progress"
+                  tasks={subtasksByStatus.inProgress || []}
+                  status="IN_PROGRESS"
+                  onMoveTask={moveSubtask}
+                  itemType={SUBTASK_ITEM_TYPE}
+                />
+                <SubTaskColumn
+                  title="Completed"
+                  tasks={subtasksByStatus.completed || []}
+                  status="COMPLETED"
+                  onMoveTask={moveSubtask}
+                  itemType={SUBTASK_ITEM_TYPE}
+                />
+              </div>
+
+              {/* Backlog Section */}
+              <div className="mt-6">
+                <SubTaskColumn
+                  title="Backlog"
+                  tasks={subtasksByStatus.backlog || []}
+                  status="BACKLOG"
+                  onMoveTask={moveSubtask}
+                  itemType={SUBTASK_ITEM_TYPE}
+                />
+              </div>
+            </div>
+
+            {/* Comment Section Sidebar */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-6">
+                <Card className="bg-background/60 backdrop-blur-sm">
+                  <CardContent className="p-0">
+                    <CommentSection taskId={TaskId} />
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
