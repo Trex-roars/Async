@@ -133,7 +133,9 @@ export default function TaskPage({
                 <Button
                   variant="outline"
                   className="gap-2"
-                  onClick={() => {router.push(`/dashboard/task/${TaskId}/subtask`)}}
+                  onClick={() => {
+                    router.push(`/dashboard/task/${TaskId}/subtask`);
+                  }}
                 >
                   <Plus className="h-4 w-4" />
                   Add Subtask
