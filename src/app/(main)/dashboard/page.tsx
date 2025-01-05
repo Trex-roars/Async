@@ -12,14 +12,13 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  Plus
+  Plus,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TaskColumn } from "./_components/TaskColumn";
-
 
 const DashboardContent = () => {
   const router = useRouter();
@@ -205,7 +204,6 @@ const DashboardContent = () => {
             tasks={tasksByStatus.todo}
             status="TODO"
             onMoveTask={moveTask}
-
           />
           <TaskColumn
             title="In Progress"
@@ -227,7 +225,6 @@ const DashboardContent = () => {
             tasks={tasksByStatus.backlog}
             status="BACKLOG"
             onMoveTask={moveTask}
-
           />
         </div>
       </div>
