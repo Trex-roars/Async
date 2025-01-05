@@ -1,8 +1,7 @@
-"use server";
+'use server';
 
-import { db } from "@/lib/db";
+import { db } from '@/lib/db'
 
-// Server action to fetch task by ID
 export async function getTaskById(id: string) {
   try {
     if (!id || typeof id !== "string" || id.trim() === "") {
@@ -18,7 +17,7 @@ export async function getTaskById(id: string) {
         },
         team: true,
         subTasks: {
-          select: { id: true, title: true, status: true, assigneeId: true },
+          select: { id: true, title: true, status: true, assigneeId: true, createdAt: true },
         },
         comments: {
           include: {
@@ -29,14 +28,25 @@ export async function getTaskById(id: string) {
             },
           },
         },
+        relatedTasks: {  // Fetch related tasks
+          select: { id: true, title: true, status: true },
+        },
+        prerequisiteOf: {  // Fetch prerequisite tasks
+          select: { id: true, title: true, status: true },
+        },
+        attachments: {  // Fetch attachments directly related to the task
+          select: { id: true, name: true, url: true, type: true, size: true },
+        },
+
       },
     });
 
     if (!task) {
       throw new Error(`Task with ID ${id} not found.`);
     }
-
+    console.log("Task retrieved successfully:", task);
     return task;
+
   } catch (error: any) {
     console.error("Error retrieving task:", error.message);
     throw new Error(error.message || "An error occurred while retrieving the task.");
