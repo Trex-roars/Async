@@ -5,6 +5,7 @@ import {
   AudioWaveform,
   BookOpen,
   Bot,
+  ChartBarBig,
   Command,
   Frame,
   GalleryVerticalEnd,
@@ -35,35 +36,29 @@ const TEAMS = [
 
 const NAV_MAIN = [
   {
-    title: "Playground",
+    title: "Dashboard",
     url: "#",
     icon: SquareTerminal,
     isActive: true,
     items: [
-      { title: "History", url: "#" },
-      { title: "Starred", url: "#" },
-      { title: "Settings", url: "#" },
+      { title: "Team", url: "/dashboard" },
+      { title: "Personal", url: "#" },
+      { title: "Assigned", url: "#" },
     ],
   },
   {
-    title: "Models",
-    url: "#",
+    title: "Todays Tasks",
+    url: "/today-task",
     icon: Bot,
-    items: [
-      { title: "Genesis", url: "#" },
-      { title: "Explorer", url: "#" },
-      { title: "Quantum", url: "#" },
-    ],
+    items: [{ title: "Add", url: "#" }],
   },
   {
-    title: "Documentation",
+    title: "Assign",
     url: "#",
     icon: BookOpen,
     items: [
-      { title: "Introduction", url: "#" },
-      { title: "Get Started", url: "#" },
-      { title: "Tutorials", url: "#" },
-      { title: "Changelog", url: "#" },
+      { title: "Assign Task", url: "#" },
+      { title: "Assign Subtask", url: "#" },
     ],
   },
   {
@@ -80,7 +75,7 @@ const NAV_MAIN = [
 ];
 
 const PROJECTS = [
-  { name: "Design Engineering", url: "#", icon: Frame },
+  { name: "Chat", url: "#", icon: ChartBarBig },
   { name: "Sales & Marketing", url: "#", icon: PieChart },
   { name: "Travel", url: "#", icon: Map },
 ];

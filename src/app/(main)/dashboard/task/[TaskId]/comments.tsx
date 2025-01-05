@@ -1,17 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
 import { createCommentOnTask, getCommentsOnTask } from "@/actions/comments";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { useUser } from "@/hooks/userProvider";
 import { Loader2, MessageSquare, Send, XCircle } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import React, { useEffect, useRef, useState } from "react";
 
 const TaskComments = ({ taskId }: { taskId: string }) => {
   const { userData } = useUser() as {
     userData: { avatar: string; name: string; email: string; id: string };
-  };
+  }; 
 
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
