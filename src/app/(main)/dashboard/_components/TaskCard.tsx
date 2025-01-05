@@ -6,35 +6,18 @@ import { motion } from "framer-motion";
 import {
   AlertCircle,
   Calendar,
-  CheckCircle2,
-  CircleDashed,
-  RotateCcw,
-  Timer,
-  Users,
+  Users
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useDrag } from "react-dnd";
-// import { StatusIcon } from "./StatusIcon";
+import { StatusIcon } from "./StatusIcon";
 
-interface TaskCardProps {
-  task: Task;
-  itemType: string;
-  showSubtasks?: boolean;
-}
 
 const ITEM_TYPE = "TASK";
 
 type TaskStatus = "TODO" | "IN_PROGRESS" | "COMPLETED" | "BACKLOG";
 
-const StatusIcon = ({ status }: { status: TaskStatus }) => {
-  const icons = {
-    TODO: <CircleDashed className="h-5 w-5" />,
-    IN_PROGRESS: <Timer className="h-5 w-5" />,
-    COMPLETED: <CheckCircle2 className="h-5 w-5" />,
-    BACKLOG: <RotateCcw className="h-5 w-5" />,
-  };
-  return icons[status];
-};
+
 
 export const TaskCard = ({ task }: { task: Task }) => {
   const router = useRouter();
