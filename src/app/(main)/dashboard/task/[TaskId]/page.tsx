@@ -19,6 +19,7 @@ import { use, useEffect, useMemo, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TaskColumn } from "../../_components/TaskColumn";
+import { useRouter } from "next/navigation";
 
 const SUBTASK_ITEM_TYPE = "SUBTASK";
 
@@ -28,6 +29,7 @@ export default function TaskPage({
   params: Promise<{ TaskId: string }>;
 }) {
   const { TaskId } = use(params);
+  const router = useRouter();
   const [task, setTask] = useState<TaskMain | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -128,7 +130,11 @@ export default function TaskPage({
                   </p>
                 </div>
                 {/* TODO: Add a SubTask option */}
-                <Button variant="outline" className="gap-2">
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => {router.push(`/dashboard/task/${TaskId}/subtask`)}}
+                >
                   <Plus className="h-4 w-4" />
                   Add Subtask
                 </Button>
