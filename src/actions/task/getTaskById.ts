@@ -5,8 +5,8 @@ import { db } from "@/lib/db";
 // Server action to fetch task by ID
 export async function getTaskById(id: string) {
   try {
-    if (!id) {
-      throw new Error("Task ID is required.");
+    if (!id || typeof id !== "string" || id.trim() === "") {
+      throw new Error("Task ID is required and should be a valid string.");
     }
 
     // Fetch task details by ID using Prisma
@@ -17,9 +17,18 @@ export async function getTaskById(id: string) {
           select: { id: true, name: true, email: true },
         },
         team: true,
-        subTasks: true,
-        comments: { include: { author: true } },
-        timeline: { include: { previousTask: true, nextTask: true } },
+        subTasks: {
+          select: { id: true, title: true, status: true, assigneeId: true },
+        },
+        comments: {
+          include: {
+            author: true,
+            attachments: true,
+            replies: {
+              include: { author: true },
+            },
+          },
+        },
       },
     });
 
@@ -28,8 +37,8 @@ export async function getTaskById(id: string) {
     }
 
     return task;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error retrieving task:", error.message);
-    throw new Error("An error occurred while retrieving the task.");
+    throw new Error(error.message || "An error occurred while retrieving the task.");
   }
 }
