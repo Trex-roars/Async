@@ -126,7 +126,7 @@ const DashboardContent = () => {
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                  Task Dashboard
+                  Team Task Dashboard
                 </h1>
                 <p className="mt-2 max-w-2xl text-muted-foreground">
                   Manage and track your tasks efficiently. Drag and drop tasks

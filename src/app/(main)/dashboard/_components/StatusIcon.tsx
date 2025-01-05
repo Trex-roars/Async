@@ -1,4 +1,4 @@
-import { CircleDashed, Timer, CheckCircle2, RotateCcw } from "lucide-react";
+import { CheckCircle2, CircleDashed, RotateCcw, Timer } from "lucide-react";
 
 export const StatusIcon = ({ status }: { status: TaskStatus }) => {
   const icons = {
