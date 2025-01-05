@@ -42,7 +42,7 @@ const TaskComments = ({ taskId }: { taskId: string }) => {
     try {
       const fetchedComments = await getCommentsOnTask(taskId);
       setComments(fetchedComments);
-    } catch (error) {
+    } catch {
       setError("Failed to load comments. Please try again.");
     } finally {
       setIsLoading(false);
@@ -63,7 +63,7 @@ const TaskComments = ({ taskId }: { taskId: string }) => {
 
       setNewComment("");
       await loadComments();
-    } catch (error) {
+    } catch {
       setError("Failed to post your comment. Please try again.");
     } finally {
       setIsSubmitting(false);

@@ -15,11 +15,11 @@ import {
   Plus,
   Users,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { use, useEffect, useMemo, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { SubTaskColumn } from "../../_components/TaskColumn";
-import { useRouter } from "next/navigation";
 import CommentSection from "./comments";
 
 const SUBTASK_ITEM_TYPE = "SUBTASK";
@@ -200,7 +200,6 @@ export default function TaskPage({
                     </div>
                   </CardContent>
                 </Card>
-
                 <Card className="bg-background/60 backdrop-blur-sm transition-all hover:shadow-md">
                   <CardContent className="flex items-center gap-4 p-6">
                     <BarChart2 className="h-8 w-8 text-primary" />

@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 import { db } from "@/lib/db";
 
@@ -12,7 +12,7 @@ export async function getCommentsOnTask(taskId: string) {
       where: {
         taskId,
         // Only get top-level comments (no parentId)
-        parentId: null
+        parentId: null,
       },
       include: {
         author: true,
@@ -20,13 +20,13 @@ export async function getCommentsOnTask(taskId: string) {
           include: {
             author: true,
             attachments: true,
-          }
+          },
         },
         attachments: true,
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     return comments;
@@ -45,7 +45,7 @@ export async function getCommentsOnSubTask(subTaskId: string) {
     const comments = await db.comment.findMany({
       where: {
         subTaskId,
-        parentId: null
+        parentId: null,
       },
       include: {
         author: true,
@@ -53,13 +53,13 @@ export async function getCommentsOnSubTask(subTaskId: string) {
           include: {
             author: true,
             attachments: true,
-          }
+          },
         },
         attachments: true,
       },
       orderBy: {
-        createdAt: 'desc'
-      }
+        createdAt: "desc",
+      },
     });
 
     return comments;
