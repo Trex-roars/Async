@@ -18,7 +18,7 @@ import {
 import { use, useEffect, useMemo, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { TaskColumn } from "../../_components/TaskColumn";
+import { SubTaskColumn } from "../../_components/TaskColumn";
 import { useRouter } from "next/navigation";
 
 const SUBTASK_ITEM_TYPE = "SUBTASK";
@@ -206,21 +206,21 @@ export default function TaskPage({
 
           {/* Task Columns */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <TaskColumn
+            <SubTaskColumn
               title="To Do"
               tasks={subtasksByStatus.todo || []}
               status="TODO"
               onMoveTask={moveSubtask}
               itemType={SUBTASK_ITEM_TYPE}
             />
-            <TaskColumn
+            <SubTaskColumn
               title="In Progress"
               tasks={subtasksByStatus.inProgress || []}
               status="IN_PROGRESS"
               onMoveTask={moveSubtask}
               itemType={SUBTASK_ITEM_TYPE}
             />
-            <TaskColumn
+            <SubTaskColumn
               title="Completed"
               tasks={subtasksByStatus.completed || []}
               status="COMPLETED"
@@ -230,7 +230,7 @@ export default function TaskPage({
           </div>
 
           <div className="mt-6">
-            <TaskColumn
+            <SubTaskColumn
               title="Backlog"
               tasks={subtasksByStatus.backlog || []}
               status="BACKLOG"
