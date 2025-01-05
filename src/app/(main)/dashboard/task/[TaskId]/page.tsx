@@ -20,6 +20,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { SubTaskColumn } from "../../_components/TaskColumn";
 import { useRouter } from "next/navigation";
+import CommentSection from "./comments";
 
 const SUBTASK_ITEM_TYPE = "SUBTASK";
 
@@ -203,7 +204,7 @@ export default function TaskPage({
               </div>
             </div>
           </div>
-
+          <CommentSection taskId={TaskId} />
           {/* Task Columns */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <SubTaskColumn
