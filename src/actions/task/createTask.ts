@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { TaskStatus, Priority } from "@prisma/client";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 interface CreateTaskInput {
   title: string;
