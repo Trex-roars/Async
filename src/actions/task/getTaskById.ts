@@ -1,8 +1,10 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
 
 export async function getTaskById(id: string) {
+  const { userId } = await auth();
   try {
     if (!id || typeof id !== "string" || id.trim() === "") {
       throw new Error("Task ID is required and should be a valid string.");
@@ -51,6 +53,12 @@ export async function getTaskById(id: string) {
 
     if (!task) {
       throw new Error(`Task with ID ${id} not found.`);
+    }
+    if (
+      !task.assignees.some((assignee) => assignee.id === userId) &&
+      task.creatorId !== userId
+    ) {
+      throw new Error("You are not authorized to view this task.");
     }
     console.log("Task retrieved successfully:", task);
     return task;
