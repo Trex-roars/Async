@@ -4,7 +4,7 @@ import { Circle } from "lucide-react";
 const Page = () => {
   return (
     <div className="mt-8">
-      <h2 className="mb-4 text-2xl font-bold">Today's Tasks</h2>
+      <h2 className="mb-4 text-2xl font-bold">Today&apos;s Tasks</h2>
       <div className="rounded-lg bg-white p-6 shadow">
         <div className="grid gap-4">
           <div className="flex items-center justify-between rounded bg-gray-50 p-4">
