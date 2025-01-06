@@ -47,6 +47,7 @@ const NAV_MAIN = [
   {
     title: "Todays Tasks",
     url: "/today-task",
+    isActive: true,
     icon: Bot,
     items: [
       { title: "View", url: "#" },
@@ -60,17 +61,6 @@ const NAV_MAIN = [
     items: [
       { title: "Assign Task", url: "#" },
       { title: "Assign Subtask", url: "#" },
-    ],
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings2,
-    items: [
-      { title: "General", url: "#" },
-      { title: "Team", url: "#" },
-      { title: "Billing", url: "#" },
-      { title: "Limits", url: "#" },
     ],
   },
 ];
