@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { TaskStatus } from "@/types/enums";
+import { SubTask, TaskMain, TaskStatus } from "@/types";
 import {
   AlertCircle,
   BarChart2,
@@ -179,7 +179,7 @@ export default function TaskPage({
                         Assignees
                       </p>
                       <div className="mt-1 flex flex-wrap gap-2">
-                        {task.assignees.map((assignee) => (
+                        {task.assignees.map((assignee: any) => (
                           <Badge
                             key={assignee.id}
                             variant="secondary"
