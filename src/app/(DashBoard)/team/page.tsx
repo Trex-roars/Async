@@ -5,7 +5,6 @@ import { getAllTaskAndSubTask, updateStatusofTask } from "@/actions/task";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { useAuth } from "@clerk/nextjs";
 import { Task } from "@prisma/client";
 import {
   AlertCircle,
@@ -22,14 +21,9 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { TaskColumn } from "./_components/TaskColumn";
 
 // Create a cache key based on userId
-const createCacheKey = (userId: string | null) =>
-  userId ? `tasks-${userId}` : null;
 
 // Fetcher function for SWR
-const fetchTasks = async (userId: string) => {
-  const data = await getAllTaskAndSubTask(userId);
-  return data as unknown as Task[];
-};
+const fetcher = () => getAllTaskAndSubTask();
 
 // Memoized stats calculator
 const calculateStats = (tasks: Task[]) => {
@@ -63,23 +57,17 @@ const groupTasksByStatus = (tasks: Task[]) => ({
 
 const DashboardContent = () => {
   const router = useRouter();
-  const { isLoaded, userId } = useAuth();
-
   // SWR hook for data fetching with caching
   const {
     data: tasks = [],
     error,
     mutate,
-  } = useSWR(
-    createCacheKey(userId),
-    () => (userId ? fetchTasks(userId) : null),
-    {
-      revalidateOnFocus: false, // Won't refetch when tab regains focus
-      revalidateOnReconnect: true, // Will refetch when internet reconnects
-      dedupingInterval: 50000, // Prevents duplicate requests within 5 seconds
-      keepPreviousData: true, // Shows cached data while fetching new data
-    },
-  );
+  } = useSWR("tasks", fetcher, {
+    revalidateOnFocus: false, // Won't refetch when tab regains focus
+    revalidateOnReconnect: true, // Will refetch when internet reconnects
+    dedupingInterval: 50000, // Prevents duplicate requests within 5 seconds
+    keepPreviousData: true, // Shows cached data while fetching new data
+  });
 
   // Memoized calculations
   const tasksByStatus = useMemo(() => groupTasksByStatus(tasks), [tasks]);
@@ -95,7 +83,7 @@ const DashboardContent = () => {
 
       try {
         // Update local state immediately
-        await mutate(optimisticData, false);
+        await mutate(optimisticData as Task[], false);
 
         // Update server in background
         await updateStatusofTask(task.id, newStatus);
@@ -111,7 +99,9 @@ const DashboardContent = () => {
     [tasks, mutate],
   );
 
-  if (!isLoaded) return null;
+  const handleCreateTask = useCallback(() => {
+    router.push("/team/task/create-task");
+  }, [router]);
 
   if (error) {
     return (
@@ -143,7 +133,7 @@ const DashboardContent = () => {
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => router.push("/team/task/create-task")}
+                onClick={() => handleCreateTask()}
               >
                 <Plus className="h-4 w-4" />
                 Create Task

@@ -1,10 +1,12 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
 
-export async function getAllTaskAndSubTask(userId: string) {
+export async function getAllTaskAndSubTask() {
+  const { userId } = await auth();
   try {
-    if (!userId?.trim()) {
+    if (!userId) {
       throw new Error("Valid user ID is required.");
     }
 
