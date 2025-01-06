@@ -11,7 +11,7 @@ export async function getAllTaskAndSubTask(userId: string) {
     // Fetch tasks where user is either assignee or creator
     const tasks = await db.task.findMany({
       where: {
-        OR: [{ assignees: { some: { id: userId } } }, { creatorId: userId }],
+        OR: [{ assignees: { some: { id: userId } } }],
       },
       select: {
         id: true,
