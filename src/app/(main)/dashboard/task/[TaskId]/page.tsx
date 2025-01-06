@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { SubTask, TaskMain, TaskStatus } from "@/types/enums";
+import { TaskStatus } from "@/types/enums";
 import {
   AlertCircle,
   BarChart2,
@@ -21,6 +21,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { SubTaskColumn } from "../../_components/TaskColumn";
 import CommentSection from "./comments";
+import LoadingScreen from "@/components/globals/loadingScreen";
 
 const SUBTASK_ITEM_TYPE = "SUBTASK";
 
@@ -93,16 +94,7 @@ export default function TaskPage({
   };
 
   if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-gradient-to-b from-background to-background/80">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-primary"></div>
-          <p className="text-lg text-muted-foreground">
-            Loading task details...
-          </p>
-        </div>
-      </div>
-    );
+    <LoadingScreen />;
   }
 
   if (error || !task) {

@@ -7,7 +7,6 @@ import {
   Bot,
   ChartBarBig,
   Command,
-  Frame,
   GalleryVerticalEnd,
   Map,
   PieChart,
@@ -26,7 +25,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { useAuth } from "@clerk/nextjs";
 
 const TEAMS = [
   { name: "Acme Inc", logo: GalleryVerticalEnd, plan: "Enterprise" },
@@ -37,13 +35,13 @@ const TEAMS = [
 const NAV_MAIN = [
   {
     title: "Dashboard",
-    url: "#",
+    url: "/dashboard",
     icon: SquareTerminal,
     isActive: true,
     items: [
       { title: "Team", url: "/dashboard" },
-      { title: "Personal", url: "#" },
-      { title: "Assigned", url: "#" },
+      { title: "Personal", url: "/personal" },
+      { title: "Assigned", url: "/assigned" },
     ],
   },
   {
@@ -81,19 +79,6 @@ const PROJECTS = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { isLoaded, user } = useAuth();
-
-  if (!isLoaded) {
-    // Show a loading spinner or placeholder UI
-    return <div>Loading...</div>;
-  }
-
-  const USER_DATA = {
-    name: user?.fullName || "Guest",
-    email: user?.emailAddress || "guest@example.com",
-    avatar: user?.profileImageUrl || "/avatars/default.jpg",
-  };
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
