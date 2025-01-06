@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { TaskColumn } from "../dashboard/_components/TaskColumn";
+import { TaskColumn } from "../team/_components/TaskColumn";
 
 // Create a cache key based on userId
 const createCacheKey = (userId: string | null) =>
@@ -140,7 +140,7 @@ const DashboardContent = () => {
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => router.push("/dashboard/task/create-task")}
+                onClick={() => router.push("/team/task/create-task")}
               >
                 <Plus className="h-4 w-4" />
                 Create Task

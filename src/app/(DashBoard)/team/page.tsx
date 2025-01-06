@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { getAssignedTask, updateStatusofTask } from "@/actions/task";
+import { getAllTaskAndSubTask, updateStatusofTask } from "@/actions/task";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -19,16 +19,15 @@ import { useRouter } from "next/navigation";
 import { useMemo, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { TaskColumn } from "../dashboard/_components/TaskColumn";
+import { TaskColumn } from "./_components/TaskColumn";
 
 // Create a cache key based on userId
 const createCacheKey = (userId: string | null) =>
   userId ? `tasks-${userId}` : null;
 
 // Fetcher function for SWR
-const fetchTasks = async () => {
-  const data = await getAssignedTask();
-  console.log(data);
+const fetchTasks = async (userId: string) => {
+  const data = await getAllTaskAndSubTask(userId);
   return data as unknown as Task[];
 };
 
@@ -71,12 +70,16 @@ const DashboardContent = () => {
     data: tasks = [],
     error,
     mutate,
-  } = useSWR(createCacheKey(userId), () => (userId ? fetchTasks() : null), {
-    revalidateOnFocus: false, // Won't refetch when tab regains focus
-    revalidateOnReconnect: true, // Will refetch when internet reconnects
-    dedupingInterval: 50000, // Prevents duplicate requests within 5 seconds
-    keepPreviousData: true, // Shows cached data while fetching new data
-  });
+  } = useSWR(
+    createCacheKey(userId),
+    () => (userId ? fetchTasks(userId) : null),
+    {
+      revalidateOnFocus: false, // Won't refetch when tab regains focus
+      revalidateOnReconnect: true, // Will refetch when internet reconnects
+      dedupingInterval: 50000, // Prevents duplicate requests within 5 seconds
+      keepPreviousData: true, // Shows cached data while fetching new data
+    },
+  );
 
   // Memoized calculations
   const tasksByStatus = useMemo(() => groupTasksByStatus(tasks), [tasks]);
@@ -130,7 +133,7 @@ const DashboardContent = () => {
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                  Assigned Task Dashboard
+                  Team Task Dashboard
                 </h1>
                 <p className="mt-2 max-w-2xl text-muted-foreground">
                   Manage and track your tasks efficiently. Drag and drop tasks
@@ -140,7 +143,7 @@ const DashboardContent = () => {
               <Button
                 variant="outline"
                 className="gap-2"
-                onClick={() => router.push("/dashboard/task/create-task")}
+                onClick={() => router.push("/team/task/create-task")}
               >
                 <Plus className="h-4 w-4" />
                 Create Task

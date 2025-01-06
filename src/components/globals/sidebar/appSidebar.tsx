@@ -35,11 +35,11 @@ const TEAMS = [
 const NAV_MAIN = [
   {
     title: "Dashboard",
-    url: "/dashboard",
+    url: "/team",
     icon: SquareTerminal,
     isActive: true,
     items: [
-      { title: "Team", url: "/dashboard" },
+      { title: "Team", url: "/team" },
       { title: "Personal", url: "/personal" },
       { title: "Assigned", url: "/assigned" },
     ],

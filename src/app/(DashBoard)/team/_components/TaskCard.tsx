@@ -62,7 +62,7 @@ export const TaskCard = ({ task }: { task: Task }) => {
       <Card
         ref={dragRef}
         className={`group p-4 ${cardStyles[task.status as TaskStatus]} cursor-move rounded-xl border-none backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 ${isDragging ? "rotate-3 opacity-50" : "opacity-100"}`}
-        onClick={() => router.push(`/dashboard/task/${task.id}`)}
+        onClick={() => router.push(`/team/task/${task.id}`)}
       >
         {/* Status and Priority Banner */}
         <div className="mb-3 flex items-center justify-between">

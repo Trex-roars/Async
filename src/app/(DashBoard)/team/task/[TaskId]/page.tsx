@@ -130,9 +130,7 @@ export default function TaskPage({
                   variant="outline"
                   size="lg"
                   className="gap-2 shadow-sm transition-all hover:shadow-md"
-                  onClick={() =>
-                    router.push(`/dashboard/task/${TaskId}/subtask`)
-                  }
+                  onClick={() => router.push(`/team/task/${TaskId}/subtask`)}
                 >
                   <Plus className="h-5 w-5" />
                   Add Subtask
