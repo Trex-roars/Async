@@ -11,7 +11,7 @@ import React, { useEffect, useRef, useState } from "react";
 const TaskComments = ({ taskId }: { taskId: string }) => {
   const { userData } = useUser() as {
     userData: { avatar: string; name: string; email: string; id: string };
-  }; 
+  };
 
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
@@ -94,7 +94,7 @@ const TaskComments = ({ taskId }: { taskId: string }) => {
   };
 
   return (
-    <Card className="flex w-80 flex-col overflow-hidden rounded-xl shadow-xl">
+    <Card className="flex flex-col overflow-hidden rounded-xl shadow-xl">
       <CardHeader className="border-b px-4 py-3">
         <CardTitle className="flex items-center gap-2 text-lg font-semibold">
           <MessageSquare className="h-5 w-5 text-blue-500" />
