@@ -6,6 +6,7 @@ import { getBacklogTasks } from "./getBacklogTasks";
 import { getTaskById } from "./getTaskById";
 import { moveTaskToBacklog } from "./moveTaskToBacklog";
 import { removeAssigneeFromTask } from "./removeAssigneeFromTask";
+import { getAssignedTask } from "./getAssignedTask";
 import {
   updateStatusofSubTask,
   updateStatusofTask,
@@ -22,4 +23,5 @@ export {
   removeAssigneeFromTask,
   updateStatusofSubTask,
   updateStatusofTask,
+  getAssignedTask,
 };
