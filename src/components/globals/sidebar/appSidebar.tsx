@@ -10,7 +10,6 @@ import {
   GalleryVerticalEnd,
   Map,
   PieChart,
-  Settings2,
   SquareTerminal,
 } from "lucide-react";
 
@@ -67,8 +66,8 @@ const NAV_MAIN = [
 
 const PROJECTS = [
   { name: "Chat", url: "#", icon: ChartBarBig },
-  { name: "Sales & Marketing", url: "#", icon: PieChart },
-  { name: "Travel", url: "#", icon: Map },
+  { name: "Back Logs", url: "#", icon: PieChart },
+  { name: "Mail", url: "#", icon: Map },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
