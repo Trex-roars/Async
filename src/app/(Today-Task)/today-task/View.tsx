@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 
 import {
@@ -10,18 +10,8 @@ import {
   differenceInDays,
   startOfDay,
   isToday,
-  isPast,
 } from "date-fns";
-import {
-  Calendar,
-  Clock,
-  ChevronDown,
-  Info,
-  Maximize2,
-  Filter,
-  AlertCircle,
-  ChevronUp,
-} from "lucide-react";
+import { Calendar, ChevronDown, AlertCircle, ChevronUp } from "lucide-react";
 
 interface Assignee {
   id: string;
@@ -49,8 +39,6 @@ const COMPACT_HEIGHT = 84;
 const EXPANDED_HEIGHT = 180;
 const VERTICAL_GAP = 12;
 const DAYS_TO_SHOW = 30;
-const HEADER_HEIGHT = 140;
-const BACKLOG_HEIGHT = 320;
 
 const getStatusColor = (status: string) => {
   switch (status.toUpperCase()) {

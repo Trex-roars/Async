@@ -20,6 +20,7 @@ import { useMemo, useCallback } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { TaskColumn } from "../team/_components/TaskColumn";
+import LoadingScreen from "@/components/globals/loadingScreen";
 
 // Create a cache key based on userId
 const createCacheKey = (userId: string | null) =>
@@ -108,7 +109,7 @@ const DashboardContent = () => {
     [tasks, mutate],
   );
 
-  if (!isLoaded) return null;
+  if (!isLoaded) return <LoadingScreen />;
 
   if (error) {
     return (
