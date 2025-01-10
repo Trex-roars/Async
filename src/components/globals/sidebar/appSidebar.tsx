@@ -50,6 +50,13 @@ const initialNavMain = [
     ],
   },
   {
+    title: "Recent Task",
+    url: "#",
+    isActive: true,
+    icon: BookOpen,
+    items: [],
+  },
+  {
     title: "Todays Tasks",
     url: "/today-task",
     isActive: true,
@@ -58,12 +65,6 @@ const initialNavMain = [
       { title: "View", url: "#" },
       { title: "Add", url: "#" },
     ],
-  },
-  {
-    title: "Assign",
-    url: "#",
-    icon: BookOpen,
-    items: [], // Placeholder, to be filled asynchronously
   },
 ];
 
