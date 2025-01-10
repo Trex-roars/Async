@@ -17,18 +17,14 @@ import {
   differenceInDays,
   startOfDay,
   isToday,
-  isFuture,
   isPast,
   parseISO,
 } from "date-fns";
 import {
   Calendar,
-  ChevronDown,
   AlertCircle,
-  ChevronUp,
   Filter,
   Clock,
-  Users,
   Search,
   ZoomIn,
   ZoomOut,
