@@ -56,16 +56,16 @@ const initialNavMain = [
     icon: BookOpen,
     items: [],
   },
-  {
-    title: "Todays Tasks",
-    url: "/today-task",
-    isActive: true,
-    icon: Bot,
-    items: [
-      { title: "View", url: "#" },
-      { title: "Add", url: "#" },
-    ],
-  },
+  // {
+  //   title: "Todays Tasks",
+  //   url: "/today-task",
+  //   isActive: true,
+  //   icon: Bot,
+  //   items: [
+  //     { title: "View", url: "#" },
+  //     { title: "Add", url: "#" },
+  //   ],
+  // },
 ];
 
 const PROJECTS = [
@@ -88,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
       setNavMain((prevNavMain) => {
         const updatedNavMain = [...prevNavMain];
-        updatedNavMain[2].items = recentOnes;
+        updatedNavMain[1].items = recentOnes;
         return updatedNavMain;
       });
     };
