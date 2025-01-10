@@ -80,7 +80,7 @@ const TimelineView: React.FC<TimelineProps> = ({ tasks }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [daysToShow, setDaysToShow] = useState(DEFAULT_DAYS_TO_SHOW);
   const [selectedPriority, setSelectedPriority] = useState("all");
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [zoomLevel, setZoomLevel] = useState(0.5);
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
