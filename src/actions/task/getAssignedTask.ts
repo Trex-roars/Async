@@ -10,7 +10,6 @@ export const getAssignedTask = async () => {
     if (!userId) {
       throw new Error("You must be logged in to create tasks");
     }
-
     const tasks = await db.task.findMany({
       where: {
         assignees: {

@@ -24,6 +24,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { getLatestTask } from "@/actions/cron-tasks";
 
 const TEAMS = [
   { name: "Acme Inc", logo: GalleryVerticalEnd, plan: "Enterprise" },
@@ -31,7 +32,12 @@ const TEAMS = [
   { name: "Evil Corp.", logo: Command, plan: "Free" },
 ];
 
-const NAV_MAIN = [
+interface NavItem {
+  title: string;
+  url: string;
+}
+
+const initialNavMain = [
   {
     title: "Dashboard",
     url: "/team",
@@ -57,10 +63,7 @@ const NAV_MAIN = [
     title: "Assign",
     url: "#",
     icon: BookOpen,
-    items: [
-      { title: "Assign Task", url: "#" },
-      { title: "Assign Subtask", url: "#" },
-    ],
+    items: [], // Placeholder, to be filled asynchronously
   },
 ];
 
@@ -71,13 +74,34 @@ const PROJECTS = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [navMain, setNavMain] = React.useState(initialNavMain);
+
+  React.useEffect(() => {
+    const populateNavMain = async () => {
+      const latestTasks = await getLatestTask();
+      const topThreeTasks = latestTasks.slice(0, 3);
+      const recentOnes = topThreeTasks.map((task) => ({
+        title: task.title,
+        url: `/team/task/${task.id}`, // Create URL using the task's id
+      }));
+
+      setNavMain((prevNavMain) => {
+        const updatedNavMain = [...prevNavMain];
+        updatedNavMain[2].items = recentOnes;
+        return updatedNavMain;
+      });
+    };
+
+    populateNavMain();
+  }, []);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={TEAMS} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={NAV_MAIN} />
+        <NavMain items={navMain} />
         <NavProjects projects={PROJECTS} />
       </SidebarContent>
       <SidebarFooter>
