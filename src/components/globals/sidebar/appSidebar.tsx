@@ -4,12 +4,11 @@ import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
-  Bot,
   ChartBarBig,
   Command,
   GalleryVerticalEnd,
   Map,
-  PieChart,
+  Home,
   SquareTerminal,
 } from "lucide-react";
 
@@ -31,11 +30,6 @@ const TEAMS = [
   { name: "Acme Corp.", logo: AudioWaveform, plan: "Startup" },
   { name: "Evil Corp.", logo: Command, plan: "Free" },
 ];
-
-interface NavItem {
-  title: string;
-  url: string;
-}
 
 const initialNavMain = [
   {
@@ -69,8 +63,8 @@ const initialNavMain = [
 ];
 
 const PROJECTS = [
-  { name: "Chat", url: "#", icon: ChartBarBig },
-  { name: "Back Logs", url: "#", icon: PieChart },
+  { name: "Time Line", url: "/today-task", icon: ChartBarBig },
+  { name: "Home", url: "/", icon: Home },
   { name: "Mail", url: "#", icon: Map },
 ];
 

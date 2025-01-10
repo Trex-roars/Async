@@ -310,7 +310,7 @@ const TimelineView: React.FC<TimelineProps> = ({ tasks }) => {
       </Tabs>
 
       {backlogTasks.length > 0 && (
-        <Card className="bg-muted/50 p-4">
+        <Card className="my-5 bg-muted/50 p-4">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-violet-500" />

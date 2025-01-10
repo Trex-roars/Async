@@ -89,7 +89,7 @@ export const TaskCard = ({
         className={`h-full rounded-lg bg-gradient-to-r ${getStatusColor(
           task.status,
         )} p-4 text-white shadow-lg transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl hover:ring-2 hover:ring-white/30 ${
-          isExpanded ? "z-50" : "z-10"
+          isExpanded ? "z-[999]" : "z-1"
         }`}
       >
         <div className="flex items-center justify-between gap-3">
