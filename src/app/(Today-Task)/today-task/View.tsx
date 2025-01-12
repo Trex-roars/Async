@@ -17,18 +17,14 @@ import {
   differenceInDays,
   startOfDay,
   isToday,
-  isFuture,
   isPast,
   parseISO,
 } from "date-fns";
 import {
   Calendar,
-  ChevronDown,
   AlertCircle,
-  ChevronUp,
   Filter,
   Clock,
-  Users,
   Search,
   ZoomIn,
   ZoomOut,
@@ -60,7 +56,7 @@ interface TimelineProps {
 
 const CELL_WIDTH = 180;
 const COMPACT_HEIGHT = 88;
-const EXPANDED_HEIGHT = 200;
+// const EXPANDED_HEIGHT = 200;
 const VERTICAL_GAP = 16;
 const DEFAULT_DAYS_TO_SHOW = 30;
 
